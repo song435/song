@@ -1,0 +1,90 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, minimum-scale=1.0, maximum-scale=1.0, user-scalable=no">
+  <title>가스사고 신고 페이지</title>
+  <style>
+    body { font-family: Arial, sans-serif; padding: 15px; }
+    form { max-width: 100%; margin: 0 auto; padding: 10px; }
+    label { font-weight: bold; display: block; margin-bottom: 5px; }
+    input, textarea, select {
+      width: 100%;
+      padding: 12px;
+      margin-bottom: 15px;
+      border: 1px solid #ccc;
+      border-radius: 8px;
+      font-size: 16px;
+    }
+    button {
+      background-color: #4CAF50;
+      color: white;
+      padding: 12px;
+      border: none;
+      border-radius: 8px;
+      font-size: 16px;
+      cursor: pointer;
+      transition: background-color 0.3s;
+    }
+    button:hover { background-color: #45A049; }
+    .section-title { font-size: 1.3em; margin-bottom: 10px; font-weight: bold; }
+    @media (max-width: 768px) {
+      body { padding: 10px; }
+      input, textarea, select, button { font-size: 14px; }
+    }
+  </style>
+  <script>
+    async function submitForm(event) {
+      event.preventDefault();
+      const formData = new FormData(event.target);
+      const data = {};
+      formData.forEach((value, key) => data[key] = value);
+
+      try {
+        const response = await fetch('https://script.google.com/macros/s/YOUR_GOOGLE_SCRIPT_ID/exec', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
+          body: new URLSearchParams(data).toString()
+        });
+        if (response.ok) {
+          alert('신고가 성공적으로 접수되었습니다.');
+        } else {
+          alert('서버 응답 실패: Google Apps Script 설정을 확인해주세요.');
+        }
+      } catch (error) {
+        console.error('전송 오류:', error);
+        alert('신고 접수 중 오류가 발생했습니다.');
+      }
+    }
+  </script>
+</head>
+<body>
+  <h1>📱 가스사고 모바일 신고 페이지</h1>
+  <form onsubmit="submitForm(event)">
+    <div class="section-title">📸 현장 정보</div>
+    <label for="photo">현장 사진</label>
+    <input type="file" id="photo" name="photo" accept="image/*" required>
+
+    <label for="incident_time">사고 발생 시간</label>
+    <input type="datetime-local" id="incident_time" name="incident_time" required>
+
+    <label for="location">사고 위치 (Google Map에서 검색 후 입력)</label>
+    <input type="text" id="location" name="location" placeholder="Google Map에서 주소 또는 좌표를 입력" required>
+
+    <label for="description">사고 내용</label>
+    <textarea id="description" name="description" placeholder="가스 냄새 발생, 폭발음 등 상세히 작성" required></textarea>
+
+    <div class="section-title">📨 접수 경로</div>
+    <label for="source">접수 경로</label>
+    <select id="source" name="source" required>
+      <option value="app">모바일 앱</option>
+      <option value="web">웹사이트</option>
+      <option value="phone">전화 접수</option>
+      <option value="sms">문자 접수</option>
+    </select>
+
+    <button type="submit">🚨 신고 접수</button>
+  </form>
+  <p>💡 Google Map에서 주소를 검색해 정확히 입력해 주세요.</p>
+</body>
+</html>
